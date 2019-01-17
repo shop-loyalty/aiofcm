@@ -8,15 +8,16 @@ STATUS_SUCCESS = 'SUCCESS'
 
 
 class Message:
-    __slots__ = ('device_token', 'notification', 'data', 'priority',
-                 'message_id', 'time_to_live', 'collapse_key')
+    __slots__ = ('device_token', 'notification', 'data', 'dry_run',
+                 'priority', 'message_id', 'time_to_live', 'collapse_key')
 
     def __init__(self, device_token, notification=None, data=None,
                  priority=None, message_id=None, time_to_live=None,
-                 collapse_key=None):
+                 collapse_key=None, dry_run=False):
         self.device_token = device_token
         self.notification = notification
         self.data = data
+        self.dry_run = dry_run
         self.priority = priority
         self.message_id = message_id or str(uuid4())
         self.time_to_live = time_to_live
@@ -29,7 +30,7 @@ class Message:
         )
 
         for field in ('notification', 'data', 'priority', 'time_to_live',
-                      'collapse_key'):
+                      'collapse_key', 'dry_run'):
             value = getattr(self, field, None)
             if value is not None:
                 result[field] = value
