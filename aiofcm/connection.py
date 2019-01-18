@@ -169,12 +169,13 @@ class FCMXMPPConnection:
 class FCMConnectionPool:
     MAX_ATTEMPTS = 10
 
-    def __init__(self, sender_id, api_key, max_connections=10, loop=None):
+    def __init__(self, sender_id, api_key, max_connections=10, loop=None, environment=FCMEnvType.PROD):
         self.sender_id = sender_id
         self.api_key = api_key
         self.max_connections = max_connections
         self.loop = loop or asyncio.get_event_loop()
         self.connections = []
+        self.environment = environment
         self._lock = asyncio.Lock(loop=self.loop)
 
         self.loop.set_exception_handler(self.exception_handler)
@@ -184,7 +185,8 @@ class FCMConnectionPool:
             sender_id=self.sender_id,
             api_key=self.api_key,
             loop=self.loop,
-            on_connection_lost=self.discard_connection
+            on_connection_lost=self.discard_connection,
+            environment=self.environment
         )
         await connection.connect()
         logger.info('Connection established (total: %d)',

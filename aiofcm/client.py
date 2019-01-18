@@ -1,10 +1,10 @@
-from aiofcm.connection import FCMConnectionPool
+from aiofcm.connection import FCMConnectionPool, FCMEnvType
 from aiofcm.logging import logger
 
 
 class FCM:
-    def __init__(self, sender_id, api_key, max_connections=10, loop=None):
-        self.pool = FCMConnectionPool(sender_id, api_key, max_connections, loop)
+    def __init__(self, sender_id, api_key, max_connections=10, loop=None, environment=FCMEnvType.PROD):
+        self.pool = FCMConnectionPool(sender_id, api_key, max_connections, loop, environment)
 
     async def send_message(self, message):
         response = await self.pool.send_message(message)
