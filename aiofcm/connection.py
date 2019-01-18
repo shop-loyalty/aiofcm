@@ -53,6 +53,9 @@ class FCMXMPPConnection:
         self.xmpp_client.on_stream_destroyed.connect(
             self._on_stream_destroyed
         )
+        self.xmpp_client.on_failure.connect(
+            lambda exc: self._wait_connection.set_exception(exc)
+        )
         self.xmpp_client.start()
 
         await self._wait_connection
