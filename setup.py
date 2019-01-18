@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='aiofcm',
-    version='1.1.1',
+    version='1.1.2',
     description='An efficient Firebase Cloud Messaging Client Library '
                 'for Python/asyncio',
     long_description=open('README.rst').read(),

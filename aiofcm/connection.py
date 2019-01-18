@@ -1,3 +1,4 @@
+import enum
 import json
 import asyncio
 
@@ -22,19 +23,29 @@ class FCMMessageType:
     NACK = 'nack'
 
 
+class FCMEnvType(enum.IntEnum):
+    DEV = 5236
+    PROD = 5235
+
+
 class FCMXMPPConnection:
     FCM_HOST = 'fcm-xmpp.googleapis.com'
-    FCM_PORT = 5235
     INACTIVITY_TIME = 10
 
-    def __init__(self, sender_id, api_key, loop=None, max_requests=1000,
-                 on_connection_lost=None):
+    def __init__(self,
+                 sender_id,
+                 api_key,
+                 loop=None,
+                 max_requests=1000,
+                 on_connection_lost=None,
+                 environment=FCMEnvType.PROD):
         self.max_requests = max_requests
+        self.environment = environment
         self.xmpp_client = aioxmpp.Client(
             local_jid=aioxmpp.JID.fromstr('%s@gcm.googleapis.com' % sender_id),
             security_layer=aioxmpp.make_security_layer(api_key),
             override_peer=[
-                (self.FCM_HOST, self.FCM_PORT,
+                (self.FCM_HOST, self.environment.value,
                  aioxmpp.connector.XMPPOverTLSConnector())
             ],
             loop=loop
@@ -45,6 +56,10 @@ class FCMXMPPConnection:
         self.inactivity_timer = None
 
         self.requests = {}
+
+    @property
+    def port(self):
+        return
 
     async def connect(self):
         self.xmpp_client.on_stream_established.connect(
